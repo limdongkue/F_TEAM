@@ -43,5 +43,8 @@ public:
 public:
 	map<CString, UNITDATA*>		m_mapUnitData;
 	CMyForm*		m_pOwner;
+	CImage*			m_pImage;
 	virtual void OnOK();
+	CStatic m_SpriteImg;
+	afx_msg void OnImgSelectClicked();
 };

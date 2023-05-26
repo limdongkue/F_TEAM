@@ -9,9 +9,10 @@
 //
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
+#else#define WINVER 0x501
+#endif
 #include "afxres.h"
 #include "verrsrc.h"
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -28,6 +29,17 @@ LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
 //
 // TEXTINCLUDE
 //
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#else#define WINVER 0x501\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "#include ""verrsrc.h""\r\n"
+    "\0"
+END
 
 1 TEXTINCLUDE 
 BEGIN
@@ -213,6 +225,8 @@ BEGIN
     PUSHBUTTON      "저장하기",IDC_BUTTON2,200,13,50,14
     PUSHBUTTON      "불러오기",IDC_BUTTON3,256,13,50,14
     PUSHBUTTON      "삭제하기",IDC_BUTTON4,201,38,50,14
+    CONTROL         "",IDC_PICT,"Static",SS_BITMAP | SS_CENTERIMAGE,207,59,93,61
+    PUSHBUTTON      "기본 이미지 고르기",IDC_BUTTON5,207,135,96,22
 END
 
 IDD_MAPTOOL DIALOGEX 0, 0, 320, 200
