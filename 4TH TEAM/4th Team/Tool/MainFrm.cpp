@@ -105,22 +105,25 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 
 	m_MainSplitter.CreateStatic(this, 1, 2);
 
-	m_MainSplitter.CreateView(0, 1, RUNTIME_CLASS(CToolView) , CSize(WINCX, WINCY), pContext);
+	m_MainSplitter.CreateView(0, 0, RUNTIME_CLASS(CToolView) , CSize(WINCX, WINCY), pContext);
 
 	m_SecondSplitter.CreateStatic(&m_MainSplitter, 2, 1, 
 									WS_CHILD | WS_VISIBLE, // WS_CHILD : 종속적인 자식 창, WS_VISIBLE | 생성 후 바로 화면에 표시하겠다는 옵션
-									m_MainSplitter.IdFromRowCol(0, 0)); //: IdFromRowCol(행, 열) - 지정한 행과 열의 창 id값을 반환
+									m_MainSplitter.IdFromRowCol(0, 1)); //: IdFromRowCol(행, 열) - 지정한 행과 열의 창 id값을 반환
 
-	m_SecondSplitter.CreateView(0, 0, RUNTIME_CLASS(CMiniView), CSize(300, 300), pContext);
+	m_SecondSplitter.CreateView(0, 0, RUNTIME_CLASS(CMiniView), CSize(600, 300), pContext);
 
-	m_SecondSplitter.CreateView(1, 0, RUNTIME_CLASS(CMyForm), CSize(300, 300), pContext);
+	m_SecondSplitter.CreateView(1, 0, RUNTIME_CLASS(CMyForm), CSize(600, 600), pContext);
 
 	//SetColumnInfo(열 번호, 열의 크기 지정, 허용 가능한 최소 크기)
-	m_MainSplitter.SetColumnInfo(0, 300, 10);
+	m_MainSplitter.SetColumnInfo(0, 1200, 10); 
+	//m_SecondSplitter.SetColumnInfo(0, 10, 10);
 
 	CToolView* pSrc = dynamic_cast<CToolView*>(m_MainSplitter.GetPane(0, 1));
 
 	CMiniView* pTmp = dynamic_cast<CMiniView*>(m_SecondSplitter.GetPane(0, 0));
+
+
 
 	
 	return TRUE;

@@ -9,9 +9,10 @@
 //
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
+#else#define WINVER 0x501
+#endif
 #include "afxres.h"
 #include "verrsrc.h"
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -28,6 +29,17 @@ LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
 //
 // TEXTINCLUDE
 //
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#else#define WINVER 0x501\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "#include ""verrsrc.h""\r\n"
+    "\0"
+END
 
 1 TEXTINCLUDE 
 BEGIN
@@ -71,7 +83,9 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\Tool.ico"
+
 IDR_ToolTYPE            ICON                    "res\\ToolDoc.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -79,6 +93,7 @@ IDR_ToolTYPE            ICON                    "res\\ToolDoc.ico"
 //
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -186,11 +201,11 @@ IDD_MYFORM DIALOGEX 0, 0, 320, 200
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 FONT 9, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    PUSHBUTTON      "UNITTOOL",IDC_BUTTON1,89,6,82,35
-    PUSHBUTTON      "MAPTOOL",IDC_BUTTON5,7,48,82,35
+    PUSHBUTTON      "UNITTOOL",IDC_BUTTON1,13,72,55,13,BS_MULTILINE,WS_EX_DLGMODALFRAME
+    PUSHBUTTON      "MAPTOOL",IDC_BUTTON5,13,46,55,15,BS_MULTILINE,WS_EX_DLGMODALFRAME
     CONTROL         "오브젝트 에디팅",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON,16,26,64,10
     CONTROL         "타일 에디팅",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON | WS_GROUP,16,14,51,10
-    PUSHBUTTON      "BattleObjEditor",IDC_BUTTON2,7,95,82,38
+    PUSHBUTTON      "BattleObjEditor",IDC_BUTTON2,7,155,82,38
 END
 
 IDD_UNITTOOL DIALOGEX 0, 0, 320, 200
@@ -213,13 +228,17 @@ BEGIN
     PUSHBUTTON      "저장하기",IDC_BUTTON2,200,13,50,14
     PUSHBUTTON      "불러오기",IDC_BUTTON3,256,13,50,14
     PUSHBUTTON      "삭제하기",IDC_BUTTON4,201,38,50,14
+    CONTROL         "",IDC_PICT,"Static",SS_BITMAP | SS_CENTERIMAGE,207,59,93,61
+    PUSHBUTTON      "기본 이미지 고르기",IDC_BUTTON5,207,135,96,22
 END
 
 IDD_MAPTOOL DIALOGEX 0, 0, 320, 200
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "MapTool"
 FONT 9, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_TAB1,"SysTabControl32",0x0,7,7,306,186
+    LISTBOX         IDC_LIST1,39,18,96,163,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_PICTURE,"Static",SS_BLACKFRAME,160,29,81,44
 END
 
 IDD_DIALOG1 DIALOGEX 0, 0, 310, 176
@@ -297,6 +316,10 @@ BEGIN
         VERTGUIDE, 89
         TOPMARGIN, 6
         BOTTOMMARGIN, 193
+        HORZGUIDE, 61
+        HORZGUIDE, 73
+        HORZGUIDE, 91
+        HORZGUIDE, 104
     END
 
     IDD_UNITTOOL, DIALOG
@@ -318,6 +341,7 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 193
         HORZGUIDE, 18
+        HORZGUIDE, 181
     END
 
     IDD_DIALOG1, DIALOG
