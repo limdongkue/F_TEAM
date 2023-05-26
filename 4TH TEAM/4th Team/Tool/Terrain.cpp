@@ -16,13 +16,13 @@ CTerrain::~CTerrain()
 
 HRESULT CTerrain::Initialize(void)
 {
-	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"../Texture/Stage/Terrain/Tile/Tile%d.png", TEX_MULTI, L"Terrain", L"Tile", 36)))
+	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"../Image/Texture/Back/Tile/0.png", TEX_MULTI, L"Terrain", L"Tile", 216)))
 	{
 		AfxMessageBox(L"TileTexture Create Failed");
 		return E_FAIL;
 	}
 
-	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"../Image/Texture/Back/TileSelect/0.png", TEX_SINGLE, L"Terrain_Select")))
+	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"..//Image/Texture/Back/Tile/0.png", TEX_SINGLE, L"Terrain_Select")))
 	{
 		AfxMessageBox(L"TileTexture Create Failed");
 		return E_FAIL;
@@ -114,7 +114,7 @@ void CTerrain::Render()
 	for (auto& iter : m_iSelectedList)
 	{
 		D3DXMatrixIdentity(&matWorld);
-		D3DXMatrixScaling(&matScale, 2.f, 2.f, 1.f);
+		D3DXMatrixScaling(&matScale, 1.f, 1.f, 1.f);
 		D3DXMatrixTranslation(&matTrans,
 			m_vecTile[iter]->vPos.x - m_pMainView->GetScrollPos(0),
 			m_vecTile[iter]->vPos.y - m_pMainView->GetScrollPos(1),
@@ -180,8 +180,8 @@ void CTerrain::Mini_Render(void)
 		D3DXMatrixIdentity(&matWorld);
 		D3DXMatrixScaling(&matScale, 2.f, 2.f, 1.f);
 		D3DXMatrixTranslation(&matTrans,
-			m_vecTile[iter]->vPos.x - m_pMainView->GetScrollPos(0),
-			m_vecTile[iter]->vPos.y - m_pMainView->GetScrollPos(1),
+			m_vecTile[iter]->vPos.x,
+			m_vecTile[iter]->vPos.y,
 			0.f);
 
 		matWorld = matScale * matTrans;

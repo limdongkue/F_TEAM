@@ -67,7 +67,7 @@ void CMyForm::OnInitialUpdate()
 
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 
-	m_Font.CreatePointFont(150, L"궁서");
+	m_Font.CreatePointFont(100, L"둥근모꼴");
 
 	GetDlgItem(IDC_BUTTON1)->SetFont(&m_Font);
 	GetDlgItem(IDC_BUTTON5)->SetFont(&m_Font);
