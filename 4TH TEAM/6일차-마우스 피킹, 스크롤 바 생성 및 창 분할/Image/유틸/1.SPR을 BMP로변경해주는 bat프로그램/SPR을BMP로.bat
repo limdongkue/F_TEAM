@@ -1,2 +1,0 @@
-@echo off
-quickbms -G
