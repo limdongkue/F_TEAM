@@ -1,5 +1,7 @@
 #pragma once
 #include "afxcmn.h"
+#include "afxwin.h"
+#include <atlimage.h>
 
 // CMapTool 대화 상자입니다.
 
@@ -25,14 +27,21 @@ protected:
 
 public:
 	virtual BOOL OnInitDialog();
+	void		 Horizontal_Scroll(void);
 
 public:
-	afx_msg void OnChangeTap(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnListBox();
+	afx_msg void OnDropFiles(HDROP hDropInfo);
 
 public:
 	CTabCtrl m_tab;
 	CDlgTab1* m_dlg1;
 	CDlgTab2* m_dlg2;
 
+
+	CStatic m_Picture;
+	CListBox m_ListBox;
+	map<CString, CImage*>	m_mapngImg;
+	int						m_iDrawID = 0;
 
 };
