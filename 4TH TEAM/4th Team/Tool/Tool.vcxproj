@@ -197,11 +197,12 @@
     <ClInclude Include="AbstractFactory.h" />
     <ClInclude Include="BattleUnit.h" />
     <ClInclude Include="Device.h" />
-<ClInclude Include="DlgTab1.h" />
-<ClInclude Include="DlgTab2.h" />
-<ClInclude Include="EditMgr.h" />
-<ClInclude Include="MainFrm.h" />
-  <ClInclude Include="MapTool.h" />
+    <ClInclude Include="DlgTab1.h" />
+    <ClInclude Include="DlgTab2.h" />
+    <ClInclude Include="EditMgr.h" />
+    <ClInclude Include="FileInfo.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MapTool.h" />
     <ClInclude Include="MiniView.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MultiTexture.h" />
@@ -224,10 +225,11 @@
   <ItemGroup>
     <ClCompile Include="BattleUnit.cpp" />
     <ClCompile Include="Device.cpp" />
-<ClCompile Include="DlgTab1.cpp" />
+    <ClCompile Include="DlgTab1.cpp" />
     <ClCompile Include="DlgTab2.cpp" />
-<ClCompile Include="EditMgr.cpp" />
-<ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="EditMgr.cpp" />
+    <ClCompile Include="FileInfo.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MapTool.cpp" />
     <ClCompile Include="MiniView.cpp" />
     <ClCompile Include="Monster.cpp" />

@@ -7,6 +7,8 @@
 #include "afxdialogex.h"
 #include	"MyForm.h"
 #include	"EditMgr.h"
+#include	"FileInfo.h"
+#include	"TextureMgr.h"
 
 
 // CUnitTool 대화 상자입니다.
@@ -17,7 +19,7 @@ CUnitTool::CUnitTool(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD_UNITTOOL, pParent)
 	, m_strName(_T(""))
 	, m_iHp(0)
-	, m_iAttack(0)
+	, m_iAttack(0), m_pImage(nullptr)
 {
 
 }
@@ -44,6 +46,7 @@ void CUnitTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RADIO1, m_Radio[0]);
 	DDX_Control(pDX, IDC_RADIO2, m_Radio[1]);
 	DDX_Control(pDX, IDC_RADIO3, m_Radio[2]);
+	DDX_Control(pDX, IDC_PICT, m_SpriteImg);
 }
 
 
@@ -56,6 +59,7 @@ BEGIN_MESSAGE_MAP(CUnitTool, CDialog)
 
 	ON_WM_DESTROY()
 
+	ON_BN_CLICKED(IDC_BUTTON5, &CUnitTool::OnImgSelectClicked)
 END_MESSAGE_MAP()
 
 
@@ -147,6 +151,9 @@ void CUnitTool::OnDestroy()
 	m_mapUnitData.clear();
 
 	m_ListBox.ResetContent();
+
+	m_pImage->Destroy();
+	Safe_Delete(m_pImage);
 }
 
 
@@ -393,4 +400,108 @@ void CUnitTool::OnOK()
 
 	CEditMgr::Get_Instance()->Set_EType(EDIT_OBJECT);
 	
+}
+
+
+void CUnitTool::OnImgSelectClicked()
+{
+	CFileDialog	Dlg(FALSE,
+		L"png",
+		L"*png",
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Data Files(*.png) | *.png||",
+		this);
+
+	TCHAR	szPath[MAX_PATH] = L"";
+
+	GetCurrentDirectory(MAX_PATH, szPath);
+
+	PathRemoveFileSpec(szPath);
+
+	lstrcat(szPath, L"\\Image\\Texture\\Unit");
+	Dlg.m_ofn.lpstrInitialDir = szPath;
+
+	if (IDOK == Dlg.DoModal())
+	{
+		CString		strTemp = Dlg.GetPathName().GetString();
+		TCHAR	pGetPath[MAX_PATH];
+
+		BattleUnitCreator&		tSrc = CEditMgr::Get_Instance()->Get_BUC();
+
+
+		lstrcpy(pGetPath, strTemp.GetString());
+
+		CString strIndex = PathFindFileName(pGetPath);
+
+		int i = 0;
+
+		for (; i < strIndex.GetLength(); ++i)
+		{
+			// isdigit : 매개 변수로 전달받은 문자가 숫자형태의 글자인지 아니면 글자형태의 글자인지 판별하는 함수
+			// 숫자형태의 글자로 판별하면 0이 아닌 값을 반환
+
+			if (0 != isdigit(strIndex[i]))
+				break;
+		}
+
+		// Delete(index, count) : 인덱스 위치로부터 카운트만큼 문자를 삭제하는 함수
+		strIndex.Delete(0, i);
+
+		//_tstoi : 문자를 정수형으로 변환하는 함수
+		tSrc.m_tPath.iCount = _tstoi(strIndex);
+
+
+		PathRemoveFileSpec(pGetPath);
+
+		CString		strSrc = PathFindFileName(pGetPath);
+		
+		CString		strFileName = PathFindFileName(strTemp);
+
+
+		tSrc.m_tPath.wstrStateKey = strSrc;
+
+		PathRemoveFileSpec(pGetPath);
+
+		tSrc.m_tPath.wstrObjKey = pGetPath;
+
+		TCHAR	szMy[MAX_PATH] = L"";
+
+		GetCurrentDirectory(MAX_PATH, szMy);
+
+		PathRemoveFileSpec(szMy);
+
+		lstrcat(szMy, L"\\Image");
+
+		CString strSTmp = CFileInfo::ConvertRelativePath(szMy);
+
+		tSrc.m_tPath.wstrObjKey = CFileInfo::ConvertRelativePath(tSrc.m_tPath.wstrObjKey.c_str());
+
+		tSrc.m_tPath.wstrObjKey.erase(0, strSTmp.GetLength() + 1);
+
+		tSrc.m_tPath.wstrPath = strSTmp;
+
+		tSrc.m_strName = PathFindFileName(tSrc.m_tPath.wstrObjKey.c_str());
+
+
+		CTextureMgr::Get_Instance()->Insert_Texture(tSrc.m_tPath.GetPath().c_str(), TEX_SINGLE, tSrc.m_strName.c_str());
+
+		UpdateData(TRUE);
+
+		if (m_pImage != nullptr)
+		{
+			m_pImage->Destroy();
+			Safe_Delete(m_pImage);
+		}
+
+		m_pImage = new CImage;
+
+		m_pImage->Load(tSrc.m_tPath.GetPath().c_str());
+
+		m_SpriteImg.SetBitmap(*m_pImage);
+
+		UpdateData(FALSE);
+		
+
+	}
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }

@@ -76,20 +76,20 @@ void CToolView::OnInitialUpdate()
 
 	RECT	rcMainView{};
 
-	// GetClientRect : 현재 view창의 RECT 정보를 얻어오는 함수
-	GetClientRect(&rcMainView);
+	//// GetClientRect : 현재 view창의 RECT 정보를 얻어오는 함수
+	//GetClientRect(&rcMainView);
 
-	float		fRowFrm = float(rcWnd.right - rcMainView.right);
-	float		fColFrm = float(rcWnd.bottom - rcMainView.bottom);
+	//float		fRowFrm = float(rcWnd.right - rcMainView.right);
+	//float		fColFrm = float(rcWnd.bottom - rcMainView.bottom);
 
-	//SetWindowPos : 매개 변수대로 새롭게 윈도우 위치와 크기를 조정하는 함수
-	 // (배치할 윈도우의 Z순서에 대한 포인터, X좌표, Y좌표, 가로 크기, 세로 크기, 배치할 윈도우의 크기및 위치 지정 옵션)
-	pMainFrm->SetWindowPos(nullptr,  // 순서 변경을 안하기 때문에 NULL
-							0, 
-							0, 
-							int(WINCX + fRowFrm),
-							int(WINCY + fColFrm), 
-							SWP_NOZORDER);	// 현재 순서를 유지하겠다는 옵션
+	////SetWindowPos : 매개 변수대로 새롭게 윈도우 위치와 크기를 조정하는 함수
+	// // (배치할 윈도우의 Z순서에 대한 포인터, X좌표, Y좌표, 가로 크기, 세로 크기, 배치할 윈도우의 크기및 위치 지정 옵션)
+	//pMainFrm->SetWindowPos(nullptr,  // 순서 변경을 안하기 때문에 NULL
+	//						0, 
+	//						0, 
+	//						int(WINCX + fRowFrm),
+	//						int(WINCY + fColFrm), 
+	//						SWP_NOZORDER);	// 현재 순서를 유지하겠다는 옵션
 
 
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.

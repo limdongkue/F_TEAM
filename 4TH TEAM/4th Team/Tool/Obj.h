@@ -32,6 +32,8 @@ protected:
 	INFO		m_tInfo;
 	IMGPATH		m_tImgPath;
 
+	int			m_iCurTileIndex;
+
 
 	bool		m_bDead;
 

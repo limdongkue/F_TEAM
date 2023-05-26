@@ -36,11 +36,11 @@ typedef struct tagTile
 
 typedef	struct tagUnitData
 {
-	CString	strName;
-	int		iAttack;
-	int		iHp;
-	BYTE	byJobIndex;
-	BYTE	byItem;
+	CString	strName = L"";
+	int		iAttack = 0;
+	int		iHp = 0;
+	BYTE	byJobIndex = 0;
+	BYTE	byItem = 0;
 
 }UNITDATA;
 
@@ -50,6 +50,14 @@ typedef struct tagTexturePath
 	wstring		wstrStateKey	= L"";
 	wstring		wstrPath = L"";
 	int			iCount = 0;
+
+	wstring		GetPath()
+	{
+		wstring src = L"";
+
+		src = wstrPath + L"\\" + wstrObjKey + L"\\" + wstrStateKey + L"\\" + to_wstring(iCount) + L".png";
+		return src;
+	}
 
 }IMGPATH;
 
@@ -63,3 +71,11 @@ static D3DXVECTOR3		Get_Mouse()
 
 	return D3DXVECTOR3((float)Pt.x, (float)Pt.y, 0.f);
 }
+
+struct BattleUnitCreator
+{
+	UNITDATA	m_tData;
+	IMGPATH		m_tPath;
+	wstring		m_strName = L"";
+
+};
