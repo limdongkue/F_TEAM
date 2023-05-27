@@ -15,7 +15,7 @@
 #include "TextureMgr.h"
 #include "MainFrm.h"
 #include "MiniView.h"
-#include	"EditMgr.h"
+#include "EditMgr.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -202,7 +202,15 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
-	CScrollView::OnLButtonDown(nFlags, point);
+	CMainFrame*		pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	
+	if (!pMainFrm)
+		return;
+
+	CMiniView*		pMiniView = dynamic_cast<CMiniView*>(pMainFrm->m_SecondSplitter.GetPane(0, 0));
+	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitter.GetPane(1, 0));
+
+	int iDrawID = CEditMgr::Get_Instance()->Get_TileNum();
 
 	// point : 마우스 좌표를 갖고 있음.
 
@@ -212,7 +220,9 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		if (iSrc != -1)
 		{
-			m_pTerrain->Set_Index(iSrc);
+			/*CEditMgr::Get_Instance()->Get_TileNum();*/
+			/*m_pTerrain->Set_Index(iSrc);*/
+			CEditMgr::Get_Instance()->Set_TileNum(iDrawID);
 		}
 	}
 
@@ -223,11 +233,8 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	// 인자가 TRUE : WM_PAINT와 WM_ERASEBKGND 메세지를 발생
 	
 	Invalidate(FALSE);
-
-	CMainFrame*		pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	CMiniView*		pMiniView = dynamic_cast<CMiniView*>(pMainFrm->m_SecondSplitter.GetPane(0, 0));
-
 	pMiniView->Invalidate(FALSE);
+	CScrollView::OnLButtonDown(nFlags, point);
 
 }
 

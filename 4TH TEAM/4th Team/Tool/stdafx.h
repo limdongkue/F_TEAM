@@ -54,13 +54,14 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
 
 #include <vector>
 #include <list>
 #include <string>
 #include <map>
 #include <algorithm>
-#include "Enum.h"
-#include "Functor.h"
+
 
 using namespace std;

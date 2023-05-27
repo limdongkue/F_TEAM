@@ -37,7 +37,6 @@ public:
 	bool	Picking(const D3DXVECTOR3& vPos, const int& iIndex);
 	bool	Picking_Dot(const D3DXVECTOR3& vPos, const int& iIndex);
 
-
 private:
 	vector<TILE*>		m_vecTile;
 

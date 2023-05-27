@@ -3,6 +3,8 @@
 #include "TextureMgr.h"
 #include "Device.h"
 #include "ToolView.h"
+#include "EditMgr.h"
+
 
 CTerrain::CTerrain() : m_iSelectedIndex(0), m_iImgCode(0)
 {
@@ -16,13 +18,13 @@ CTerrain::~CTerrain()
 
 HRESULT CTerrain::Initialize(void)
 {
-	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"../Image/Texture/Back/Tile/0.png", TEX_MULTI, L"Terrain", L"Tile", 216)))
+	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"../Image/Texture/Back/Tile/%d.png", TEX_MULTI, L"Terrain", L"Tile", 216)))
 	{
 		AfxMessageBox(L"TileTexture Create Failed");
 		return E_FAIL;
 	}
 
-	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"..//Image/Texture/Back/Tile/0.png", TEX_SINGLE, L"Terrain_Select")))
+	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"..//Image/Texture/Back/TileOption/3.png", TEX_SINGLE, L"Terrain_Select")))
 	{
 		AfxMessageBox(L"TileTexture Create Failed");
 		return E_FAIL;
@@ -40,7 +42,7 @@ HRESULT CTerrain::Initialize(void)
 			pTile->vPos = {fX, fY, 0.f};
 			pTile->vSize = { TILECX, TILECY, 0.f };
 			pTile->byOption = 0;
-			pTile->byDrawID = 3;
+			pTile->byDrawID = 20;
 			
 			m_vecTile.push_back(pTile);
 		}
@@ -73,8 +75,8 @@ void CTerrain::Render()
 		D3DXMatrixIdentity(&matWorld);
 		D3DXMatrixScaling(&matScale, 1.f, 1.f, 1.f);
 		D3DXMatrixTranslation(&matTrans,
-			iter->vPos.x - m_pMainView->GetScrollPos(0),
-			iter->vPos.y - m_pMainView->GetScrollPos(1),
+			iter->vPos.x - m_pMainView->GetScrollPos(0), // 0일 경우 x 스크롤 값 얻어옴
+			iter->vPos.y - m_pMainView->GetScrollPos(1), // 1일 경우 y 스크롤 값 얻어옴
 			0.f);
 
 		matWorld = matScale * matTrans;
@@ -82,11 +84,10 @@ void CTerrain::Render()
 		Set_Ratio(&matWorld, fX, fY);
 
 		const TEXINFO*	pTexInfo = CTextureMgr::Get_Instance()->Get_Texture(L"Terrain", L"Tile", iter->byDrawID);
-		
+
 		float	fX = pTexInfo->tImgInfo.Width / 2.f;
 		float	fY = pTexInfo->tImgInfo.Height / 2.f;
 
-			
 		// 이미지에 행렬을 반영
 		CDevice::Get_Instance()->Get_Sprite()->SetTransform(&matWorld);
 
@@ -95,8 +96,8 @@ void CTerrain::Render()
 			&D3DXVECTOR3(fX, fY, 0.f),			// 출력할 이미지의 중심축에 대한 vector3 주소, null인 경우 이미지의 0, 0이 중심 좌표
 			nullptr,							// 위치 좌표에 대한 vector3 주소, null인 경우 스크린 상의 0, 0좌표 출력
 			D3DCOLOR_ARGB(255, 255, 255, 255)); // 출력할 이미지와 섞을 색상 값, 0xffffffff를 넘겨주면 원본 색상 유지
-		
-		
+
+
 		swprintf_s(szBuf, L"%d", iIndex);
 
 		CDevice::Get_Instance()->Get_Font()->DrawTextW(CDevice::Get_Instance()->Get_Sprite(),
@@ -178,7 +179,7 @@ void CTerrain::Mini_Render(void)
 	for (auto& iter : m_iSelectedList)
 	{
 		D3DXMatrixIdentity(&matWorld);
-		D3DXMatrixScaling(&matScale, 2.f, 2.f, 1.f);
+		D3DXMatrixScaling(&matScale, 1.f, 1.f, 1.f);
 		D3DXMatrixTranslation(&matTrans,
 			m_vecTile[iter]->vPos.x,
 			m_vecTile[iter]->vPos.y,
@@ -218,7 +219,8 @@ void CTerrain::Tile_Change()
 
 	for (auto& iter : m_iSelectedList)
 	{
-		m_vecTile[iter]->byDrawID = (BYTE)m_iImgCode;
+		/*m_vecTile[iter]->byDrawID = (BYTE)m_iImgCode;*/
+		m_vecTile[iter]->byDrawID = (BYTE)CEditMgr::Get_Instance()->Get_TileNum();
 		m_vecTile[iter]->byOption = 1;
 	}
 

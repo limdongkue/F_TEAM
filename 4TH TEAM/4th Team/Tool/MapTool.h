@@ -32,6 +32,7 @@ public:
 public:
 	afx_msg void OnListBox();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
+	afx_msg void OnDestroy();
 
 public:
 	CTabCtrl m_tab;
@@ -44,4 +45,5 @@ public:
 	map<CString, CImage*>	m_mapngImg;
 	int						m_iDrawID = 0;
 
+	
 };

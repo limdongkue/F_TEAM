@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Device.h"
 
-
 CDevice::CDevice()
 	: m_pSDK(nullptr), m_pDevice(nullptr), m_pSprite(nullptr)
 {
@@ -27,7 +26,7 @@ HRESULT CDevice::Initialize(void)
 	
 	if (FAILED(m_pSDK->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &DeviceCaps)))
 	{
-		AfxMessageBox(L"GetDeviceCaps Failed");
+		ERR_MSG(L"GetDeviceCaps Failed");
 		return E_FAIL;
 	}
 
@@ -49,32 +48,31 @@ HRESULT CDevice::Initialize(void)
 	// CreateDevice(어떤 그래픽 카드를 제어할 것인가, 어떤 정보로 장치에 접근할 것인가, 장치를 사용할 윈도우, 동작 방식, 사용 환경, 장치 제어 객체 생성)
 	if (FAILED(m_pSDK->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, g_hWnd, vp, &d3dpp, &m_pDevice)))
 	{
-		AfxMessageBox(L"CreateDevice Failed");
+		ERR_MSG(L"CreateDevice Failed");
 		return E_FAIL;
 	}
 
 	if (FAILED(D3DXCreateSprite(m_pDevice, &m_pSprite)))
 	{
-		AfxMessageBox(L"Create Sprite Failed");
+		ERR_MSG(L"Create Sprite Failed");
 		return E_FAIL;
 	}
 
 	D3DXFONT_DESCW		tFontInfo;
 	ZeroMemory(&tFontInfo, sizeof(D3DXFONT_DESCW));
 
-	tFontInfo.Height = 15;
-	tFontInfo.Width = 5;
+	tFontInfo.Height = 20;
+	tFontInfo.Width = 10;
 	tFontInfo.Weight = FW_HEAVY;
 	tFontInfo.CharSet = HANGEUL_CHARSET;
 	lstrcpy(tFontInfo.FaceName, L"궁서");
 	
 	if (FAILED(D3DXCreateFontIndirect(m_pDevice, &tFontInfo, &m_pFont)))
 	{
-		AfxMessageBox(L"Create Font Failed");
+		ERR_MSG(L"Create Font Failed");
 		return E_FAIL;
 	}
 
-	int a = 0;
 
 	return S_OK;
 }
