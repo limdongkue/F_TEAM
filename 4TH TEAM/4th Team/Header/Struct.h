@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma once
+
 typedef struct tagInfo
 {
 	D3DXVECTOR3		vPos;
@@ -36,13 +38,31 @@ typedef struct tagTile
 
 typedef	struct tagUnitData
 {
-	CString	strName = L"";
-	int		iAttack = 0;
-	int		iHp = 0;
-	BYTE	byJobIndex = 0;
-	BYTE	byItem = 0;
+
+#ifndef _AFX
+	wstring		strName;
+#else
+	CString	strName;
+#endif
+
+	int		iAttack;
+	int		iHp;
+
+	BYTE	byJobIndex;
+	BYTE	byItem;
 
 }UNITDATA;
+
+
+static D3DXVECTOR3		Get_Mouse()
+{
+	POINT	Pt{};
+
+	GetCursorPos(&Pt);
+	ScreenToClient(g_hWnd, &Pt);
+
+	return D3DXVECTOR3((float)Pt.x, (float)Pt.y, 0.f);
+}
 
 typedef struct tagTexturePath
 {
@@ -61,16 +81,6 @@ typedef struct tagTexturePath
 
 }IMGPATH;
 
-
-static D3DXVECTOR3		Get_Mouse()
-{
-	POINT	Pt{};
-
-	GetCursorPos(&Pt);
-	ScreenToClient(g_hWnd, &Pt);
-
-	return D3DXVECTOR3((float)Pt.x, (float)Pt.y, 0.f);
-}
 
 struct BattleUnitCreator
 {
