@@ -31,6 +31,10 @@ public:
 			m_iSelectedList.push_back(p_Int);
 	}
 
+
+	vector<TILE*>&		Get_VecTile(void) { return m_vecTile; }
+
+
 public:
 	int		Get_TileIndex(const D3DXVECTOR3& vPos);
 	void	Tile_Change();

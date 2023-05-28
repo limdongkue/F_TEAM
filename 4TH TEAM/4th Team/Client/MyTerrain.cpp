@@ -17,7 +17,7 @@ CMyTerrain::~CMyTerrain()
 
 HRESULT CMyTerrain::Initialize(void)
 {
-	if (FAILED(LoadTile(L"../Data/Test.dat")))
+	if (FAILED(LoadTile(L"../Data/Tile.dat")))
 		return E_FAIL;
 
 	m_wstrObjKey = L"Terrain";

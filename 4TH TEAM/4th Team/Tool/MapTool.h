@@ -33,6 +33,7 @@ public:
 	afx_msg void OnListBox();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnDestroy();
+	afx_msg void OnSaveData();
 
 public:
 	CTabCtrl m_tab;
