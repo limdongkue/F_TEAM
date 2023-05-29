@@ -61,6 +61,7 @@ void CMyForm::OnMapTool()
 	m_MapTool.ShowWindow(SW_SHOW);
 }
 
+
 void CMyForm::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();

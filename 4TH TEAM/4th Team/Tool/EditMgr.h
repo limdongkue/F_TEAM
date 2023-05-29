@@ -1,5 +1,6 @@
 #pragma once
 #include	"Include.h"
+
 class CEditMgr
 {
 	SINGLETON(CEditMgr);

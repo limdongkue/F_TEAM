@@ -151,6 +151,13 @@ void CTerrain::Mini_Render(void)
 
 	for (auto iter : m_vecTile)
 	{
+		const TEXINFO* pTexInfo = CTextureMgr::Get_Instance()->Get_Texture(L"Terrain", L"Tile", iter->byDrawID);
+		if (pTexInfo == nullptr)
+			return;
+
+		float fX = pTexInfo->tImgInfo.Width * 0.5f;
+		float fY = pTexInfo->tImgInfo.Height * 0.5;
+
 		D3DXMatrixIdentity(&matWorld);
 		D3DXMatrixScaling(&matScale, 1.f, 1.f, 1.f);
 		D3DXMatrixTranslation(&matTrans,
@@ -161,11 +168,7 @@ void CTerrain::Mini_Render(void)
 		matWorld = matScale * matTrans;
 
 		Set_Ratio(&matWorld, 0.3f, 0.3f);
-
-		const TEXINFO* pTexInfo = CTextureMgr::Get_Instance()->Get_Texture(L"Terrain", L"Tile", iter->byDrawID);
-
-		float fX = pTexInfo->tImgInfo.Width / 2.f;
-		float fY = pTexInfo->tImgInfo.Height / 2.f;
+\
 
 		CDevice::Get_Instance()->Get_Sprite()->SetTransform(&matWorld);
 

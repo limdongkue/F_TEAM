@@ -33,13 +33,15 @@ protected:
 public:
 	afx_msg void OnUnitTool();
 	afx_msg void OnMapTool();
+	afx_msg void OnAnimationTool();
 
 
 private:
 	CFont	m_Font;
 	CUnitTool	m_UnitTool;
 	CMapTool	m_MapTool;
-	
+
+
 public:
 	virtual void OnInitialUpdate();
 

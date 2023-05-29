@@ -7,6 +7,8 @@
 
 class CDlgTab1;
 class CDlgTab2;
+class CTerrain;
+
 class CMapTool : public CDialog
 {
 	DECLARE_DYNAMIC(CMapTool)
@@ -28,12 +30,19 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	void		 Horizontal_Scroll(void);
+	//void		 Render_MiniMap();
+
+
+	void	Set_Terrain(CTerrain* pTerrain) { m_pTerrain = pTerrain; }
 
 public:
 	afx_msg void OnListBox();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnDestroy();
 	afx_msg void OnSaveData();
+
+
+public:
 
 public:
 	CTabCtrl m_tab;
@@ -46,5 +55,6 @@ public:
 	map<CString, CImage*>	m_mapngImg;
 	int						m_iDrawID = 0;
 
-	
+	CTerrain* m_pTerrain;
+
 };

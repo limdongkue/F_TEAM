@@ -7,7 +7,7 @@
 #include "Include.h"
 #include "Terrain.h"
 
-class CMiniView;
+class CMapTool;
 class CToolDoc;
 class CToolView : public CScrollView
 {
@@ -51,6 +51,7 @@ public:
 
 public:
 	CTerrain*			m_pTerrain;
+	CMapTool*			m_pMapTool;
 
 public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

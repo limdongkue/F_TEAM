@@ -89,3 +89,9 @@ struct BattleUnitCreator
 	wstring		m_strName = L"";
 
 };
+
+typedef struct tagUnitAnimData
+{
+	float m_fFrameSpeed;
+
+}ANIM_DATA;

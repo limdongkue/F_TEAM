@@ -22,6 +22,9 @@ public:
 
 	 void		Release(void);
 
+public:
+	map<wstring, CTexture*>* Get_mapTexture() { return &m_mapTexture; }
+
 private:
 	map<wstring, CTexture*>		m_mapTexture;
 };

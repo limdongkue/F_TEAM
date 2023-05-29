@@ -104,7 +104,7 @@ void CMyTerrain::Render(void)
 				lstrlen(szBuf), // 문자열 길이
 				nullptr,	// 출력할 렉트 주소값
 				0,			// 위의 매개변수에서 지정한 사각형 범위 안에서의 정렬 옵션, DT_CENTER, DT_LEFT
-				D3DCOLOR_ARGB(255, 0, 0, 255)); // 출력할 폰트 색상
+				D3DCOLOR_ARGB(255, 255, 255, 255)); // 출력할 폰트 색상
 
 			iIndex++;
 		}

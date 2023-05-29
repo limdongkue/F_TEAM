@@ -130,8 +130,8 @@ void CMapTool::OnListBox()
 	if (nullptr == pTexInfo)
 		return;
 
-	float scaleWidth = 4.5f;  // 가로 크기를 2배로 확대
-	float scaleHeight = 4.5f; // 세로 크기를 2배로 확대
+	float scaleWidth = 4.f;  // 가로 크기를 2배로 확대
+	float scaleHeight = 4.f; // 세로 크기를 2배로 확대
 
 							  // 이미지의 크기에 따라 Picture 컨트롤의 크기 조절
 	int pictureWidth = static_cast<int>(pTexInfo->tImgInfo.Width * scaleWidth);
@@ -142,7 +142,7 @@ void CMapTool::OnListBox()
 
 	D3DXMATRIX mScale, mWorld, mTrans;
 	D3DXMatrixScaling(&mScale, WINCX / pTexInfo->tImgInfo.Width, WINCY / pTexInfo->tImgInfo.Height, 0.f);
-	D3DXMatrixTranslation(&mTrans, 1.5f, 1.5f, 1.f);
+	D3DXMatrixTranslation(&mTrans, 1.f, 1.f, 1.f);
 
 	mWorld = mScale * mTrans;
 

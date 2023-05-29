@@ -16,6 +16,8 @@
 #include "MainFrm.h"
 #include "MiniView.h"
 #include "EditMgr.h"
+#include "MapTool.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -114,7 +116,14 @@ void CToolView::OnInitialUpdate()
 		return;
 	}
 
+
 	m_pTerrain->Set_MainView(this);
+
+	//m_pMapTool = new CMapTool;
+
+	//m_pMapTool->Set_Terrain(m_pTerrain);
+	
+
 	CEditMgr::Get_Instance()->Set_EType(EDIT_TILE);
 
 }
@@ -125,20 +134,22 @@ void CToolView::OnDraw(CDC* /*pDC*/)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-	
+	//
 	CDevice::Get_Instance()->Render_Begin();
 
 	m_pTerrain->Render();
 
-
 	CDevice::Get_Instance()->Render_End();
+
 }
+
+
 void CToolView::OnDestroy()
 {
 	CScrollView::OnDestroy();
 
 	Safe_Delete(m_pTerrain);
-
+	Safe_Delete(m_pMapTool);
 
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 }
