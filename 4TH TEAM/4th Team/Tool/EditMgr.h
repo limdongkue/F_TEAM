@@ -25,12 +25,16 @@ public:
 		return m_tCreator;
 	}
 
+	map<wstring, BattleUnitCreator>&		Get_Map() { return m_mapBattle; }
+
 private:
 	EDIT_TYPE	m_eType;
 
 	int			m_iTileNum;
 
 	BattleUnitCreator	m_tCreator;
+
+	map<wstring, BattleUnitCreator>	m_mapBattle;
 
 };
 

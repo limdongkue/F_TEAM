@@ -47,4 +47,6 @@ public:
 	virtual void OnOK();
 	CStatic m_SpriteImg;
 	afx_msg void OnImgSelectClicked();
+
+	BattleUnitCreator	m_BC;
 };
