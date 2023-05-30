@@ -83,9 +83,7 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\Tool.ico"
-
 IDR_ToolTYPE            ICON                    "res\\ToolDoc.ico"
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -93,7 +91,6 @@ IDR_ToolTYPE            ICON                    "res\\ToolDoc.ico"
 //
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -222,9 +219,9 @@ BEGIN
     EDITTEXT        IDC_EDIT3,50,63,49,24,ES_AUTOHSCROLL
     LISTBOX         IDC_LIST1,108,7,88,113,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "PUSH",IDC_BUTTON1,7,90,100,30
-    CONTROL         "전사",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,15,133,26,10
-    CONTROL         "마법사",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,15,153,32,10
-    CONTROL         "궁수",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,15,173,26,10
+    CONTROL         "플레이어",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,15,133,40,10
+    CONTROL         "몬스터",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,15,153,32,10
+    CONTROL         "NPC",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,15,173,26,10
     PUSHBUTTON      "저장하기",IDC_BUTTON2,200,13,50,14
     PUSHBUTTON      "불러오기",IDC_BUTTON3,256,13,50,14
     PUSHBUTTON      "삭제하기",IDC_BUTTON4,201,38,50,14

@@ -25,7 +25,15 @@ public:
 		return m_tCreator;
 	}
 
+	void		Set_BUC(BattleUnitCreator& p_B)
+	{
+		m_tCreator = p_B;
+	}
+
 	map<wstring, BattleUnitCreator>&		Get_Map() { return m_mapBattle; }
+
+	void		Save(CString p_string);
+	void		Load(CString p_string);
 
 private:
 	EDIT_TYPE	m_eType;

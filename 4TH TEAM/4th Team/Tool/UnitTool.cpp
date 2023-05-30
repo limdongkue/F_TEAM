@@ -72,37 +72,52 @@ void CUnitTool::OnPush()
 
 	UpdateData(TRUE);
 
-	if (m_mapUnitData.find(m_strName) != m_mapUnitData.end())
-	{
-		UpdateData(FALSE);
-		return;
 
-	}
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
 
 
-	UNITDATA*	pUnit = new UNITDATA;
 
-	pUnit->strName = m_strName;
-	pUnit->iHp = m_iHp;
-	pUnit->iAttack = m_iAttack;
+
+	m_BC.m_strName  = m_strName;
+	m_BC.m_tData.strName = m_strName;
+	m_BC.m_tData.iAttack = m_iAttack;
+	m_BC.m_tData.iHp = m_iHp;
+
 	
 	for (int i = 0; i < 3; ++i)
 	{
 		if (m_Radio[i].GetCheck())
 		{
-			pUnit->byJobIndex = i;
+			m_BC.m_tData.byJobIndex = i;
 			break;
 		}
 	}
 
-	m_ListBox.AddString(pUnit->strName);
-	m_mapUnitData.insert({ pUnit->strName, pUnit });
+	auto iter = CEditMgr::Get_Instance()->Get_Map().find(m_strName.GetString());
+
+	if (iter != CEditMgr::Get_Instance()->Get_Map().end())
+	{
+		iter->second = m_BC;
+		UpdateData(FALSE);
+
+		AfxMessageBox(L"유닛데이터 변경 완료");
+
+		m_ListBox.SelectString(0, m_BC.m_strName.c_str());
+
+		return;
+
+	}
+
+	m_ListBox.AddString(m_BC.m_strName.c_str());
+	CEditMgr::Get_Instance()->Get_Map().insert({ m_BC.m_strName, m_BC });
 
 	UpdateData(FALSE);
 
-	m_ListBox.SelectString(0, pUnit->strName);
+	AfxMessageBox(L"유닛데이터 추가 완료");
+
+
+	m_ListBox.SelectString(0, m_BC.m_strName.c_str());
 
 
 }
@@ -124,19 +139,33 @@ void CUnitTool::OnListBox()
 	// GetText : 현재 인덱스에 해당하는 문자열을 얻어오는 함수
 	m_ListBox.GetText(iSelect, strSelectName);
 
-	auto	iter = m_mapUnitData.find(strSelectName);
+	auto	iter = CEditMgr::Get_Instance()->Get_Map().find(strSelectName.GetString());
 
-	if (iter == m_mapUnitData.end())
+	if (iter == CEditMgr::Get_Instance()->Get_Map().end())
 		return;
 
-	m_strName = iter->second->strName;
-	m_iHp = iter->second->iHp;
-	m_iAttack = iter->second->iAttack;
+	m_strName = iter->second.m_strName.c_str();
+	m_iHp = iter->second.m_tData.iHp;
+	m_iAttack = iter->second.m_tData.iAttack;
 
 	for (int i = 0; i < 3; ++i)
 		m_Radio[i].SetCheck(FALSE);
 
-	m_Radio[iter->second->byJobIndex].SetCheck(TRUE);
+	m_Radio[iter->second.m_tData.byJobIndex].SetCheck(TRUE);
+
+	if (m_pImage != nullptr)
+	{
+		m_pImage->Destroy();
+		Safe_Delete(m_pImage);
+	}
+
+	m_pImage = new CImage;
+
+	m_pImage->Load(iter->second.m_tPath.GetPath().c_str());
+
+	m_SpriteImg.SetBitmap(*m_pImage);
+
+	m_BC.m_tPath = iter->second.m_tPath;
 
 	UpdateData(FALSE);
 }
@@ -147,8 +176,6 @@ void CUnitTool::OnDestroy()
 
 	//// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 
-	for_each(m_mapUnitData.begin(), m_mapUnitData.end(), CDeleteMap());
-	m_mapUnitData.clear();
 
 	m_ListBox.ResetContent();
 
@@ -160,7 +187,6 @@ void CUnitTool::OnDestroy()
 
 void CUnitTool::OnSave()
 {
-
 	CFileDialog	Dlg(FALSE,
 		L"dat",
 		L"*dat",
@@ -181,46 +207,9 @@ void CUnitTool::OnSave()
 
 	if (IDOK == Dlg.DoModal())
 	{
-		CString		strTemp = Dlg.GetPathName().GetString();
-		const TCHAR*	pGetPath = strTemp.GetString();
-
-		HANDLE hFile = CreateFile(pGetPath,
-			GENERIC_WRITE,
-			0,
-			nullptr,
-			CREATE_ALWAYS,
-			FILE_ATTRIBUTE_NORMAL,
-			nullptr);
-
-
-		if (INVALID_HANDLE_VALUE == hFile)
-		{
-			AfxMessageBox(L"Save Failed");
-			return;
-		}
-
-
-		DWORD dwByte = 0;
-		DWORD dwStringSize = 0;
-
-		for (auto& Pair : m_mapUnitData)
-		{
-			// KEY 값 저장
-			dwStringSize = sizeof(wchar_t) * (Pair.second->strName.GetLength() + 1);
-			WriteFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
-			WriteFile(hFile, Pair.second->strName.GetString(), dwStringSize, &dwByte, nullptr);
-
-			// Value값 저장
-			WriteFile(hFile, &Pair.second->iAttack, sizeof(int), &dwByte, nullptr);
-			WriteFile(hFile, &Pair.second->iHp, sizeof(int), &dwByte, nullptr);
-			WriteFile(hFile, &Pair.second->byJobIndex, sizeof(BYTE), &dwByte, nullptr);
-			/*WriteFile(hFile, &Pair.second->byItem, sizeof(BYTE), &dwByte, nullptr);*/
-		}
-
-		CloseHandle(hFile);
+		CEditMgr::Get_Instance()->Save(Dlg.GetPathName().GetString());
 	}
 
-	AfxMessageBox(L"Save Successful");
 }
 
 
@@ -250,106 +239,65 @@ void CUnitTool::OnLoad()
 
 	if (IDOK == Dlg.DoModal())
 	{
-		for (auto& iter : m_mapUnitData)
-			Safe_Delete(iter.second);
-
-		m_mapUnitData.clear();
 
 		m_ListBox.ResetContent();
 
-		CString		strTemp = Dlg.GetPathName().GetString();
-		const TCHAR*	pGetPath = strTemp.GetString();
+		CEditMgr::Get_Instance()->Load(Dlg.GetPathName().GetString());
 
-		HANDLE hFile = CreateFile(pGetPath,
-			GENERIC_READ,
-			0,
-			nullptr,
-			OPEN_EXISTING,
-			FILE_ATTRIBUTE_NORMAL,
-			nullptr);
+		map<wstring, BattleUnitCreator>& m_mapUnitData = CEditMgr::Get_Instance()->Get_Map();
 
 
-		if (INVALID_HANDLE_VALUE == hFile)
+		for (auto&	iter : m_mapUnitData)
 		{
-			AfxMessageBox(L"Load Failed");
+			m_ListBox.AddString(iter.second.m_strName.c_str());
+		}
+
+
+		m_ListBox.SelectString(0, CEditMgr::Get_Instance()->Get_Map().begin()->first.c_str());
+
+		CString		strSelectName;
+
+		// GetCurSel : 현재 리스트 박스에서 선택된 목록의 인덱스를 반환
+		int		iSelect = m_ListBox.GetCurSel();
+
+		if (-1 == iSelect)
 			return;
-		}
 
 
-		DWORD dwByte = 0;
-		DWORD dwStringSize = 0;
-		UNITDATA*	pUnit = nullptr;
+		// GetText : 현재 인덱스에 해당하는 문자열을 얻어오는 함수
+		m_ListBox.GetText(iSelect, strSelectName);
 
-		while(true)
+		auto	iter = m_mapUnitData.find(strSelectName.GetString());
+
+		if (iter == m_mapUnitData.end())
+			return;
+
+		m_strName = iter->second.m_strName.c_str();
+		m_iHp = iter->second.m_tData.iHp;
+		m_iAttack = iter->second.m_tData.iAttack;
+
+		for (int i = 0; i < 3; ++i)
+			m_Radio[i].SetCheck(FALSE);
+
+		m_Radio[iter->second.m_tData.byJobIndex].SetCheck(TRUE);
+
+		m_BC.m_tPath = iter->second.m_tPath;
+
+		if (m_pImage != nullptr)
 		{
-			// 키 값 불러오기
-			ReadFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
-
-			TCHAR* pName = new TCHAR[dwStringSize];
-			ReadFile(hFile, pName, dwStringSize, &dwByte, nullptr);
-
-			// Value값 불러오기
-			pUnit = new UNITDATA;
-
-			if (0 == dwByte)
-			{
-				Safe_Delete<UNITDATA*>(pUnit);
-
-				delete[]pName;
-				pName = nullptr;
-				break;
-			}
-
-			ReadFile(hFile, &pUnit->iAttack, sizeof(int), &dwByte, nullptr);
-			ReadFile(hFile, &pUnit->iHp, sizeof(int), &dwByte, nullptr);
-			ReadFile(hFile, &pUnit->byJobIndex, sizeof(BYTE), &dwByte, nullptr);
-			//ReadFile(hFile, &pUnit->byItem, sizeof(BYTE), &dwByte, nullptr);
-
-			pUnit->strName = pName;
-
-			delete[]pName;
-			pName = nullptr;
-
-			m_mapUnitData.insert({ pUnit->strName, pUnit });
-			m_ListBox.AddString(pUnit->strName);
+			m_pImage->Destroy();
+			Safe_Delete(m_pImage);
 		}
 
-		CloseHandle(hFile);
+		m_pImage = new CImage;
+
+		m_pImage->Load(iter->second.m_tPath.GetPath().c_str());
+
+		m_SpriteImg.SetBitmap(*m_pImage);
+
+
+		UpdateData(FALSE);
 	}
-
-	// KEY 값 저장
-
-	AfxMessageBox(L"Load Successful");
-
-	m_ListBox.SelectString(0, m_mapUnitData.begin()->first);
-
-	CString		strSelectName;
-
-	// GetCurSel : 현재 리스트 박스에서 선택된 목록의 인덱스를 반환
-	int		iSelect = m_ListBox.GetCurSel();
-
-	if (-1 == iSelect)
-		return;
-
-	// GetText : 현재 인덱스에 해당하는 문자열을 얻어오는 함수
-	m_ListBox.GetText(iSelect, strSelectName);
-
-	auto	iter = m_mapUnitData.find(strSelectName);
-
-	if (iter == m_mapUnitData.end())
-		return;
-
-	m_strName = iter->second->strName;
-	m_iHp = iter->second->iHp;
-	m_iAttack = iter->second->iAttack;
-
-	for (int i = 0; i < 3; ++i)
-		m_Radio[i].SetCheck(FALSE);
-
-	m_Radio[iter->second->byJobIndex].SetCheck(TRUE);
-
-	UpdateData(FALSE);
-
 
 
 }
@@ -369,13 +317,12 @@ void CUnitTool::OnDelete()
 	m_ListBox.GetText(iIndex, wstrName);
 	// GetText : 현재 인덱스에 해당하는 문자열을 얻어오기
 
-	auto iter = m_mapUnitData.find(wstrName); // 삭제할 키 값 찾기
+	auto iter = CEditMgr::Get_Instance()->Get_Map().find(wstrName.GetString()); // 삭제할 키 값 찾기
 	
-	if (iter == m_mapUnitData.end())
+	if (iter == CEditMgr::Get_Instance()->Get_Map().end())
 		return;
 
-	Safe_Delete(iter->second); // 찾은 키 값의 Value 삭제
-	m_mapUnitData.erase(wstrName); // erase
+	CEditMgr::Get_Instance()->Get_Map().erase(wstrName.GetString()); // erase
 	m_ListBox.DeleteString(iIndex); // list박스 인덱스 삭제
 
 	UpdateData(FALSE);
@@ -390,6 +337,21 @@ void CUnitTool::OnOK()
 
 
 	CDialog::OnOK();
+
+	int iIndex = m_ListBox.GetCurSel(); // 현재 리스트 박스의 인덱스 반환
+
+	if (LB_ERR == iIndex)
+		return;
+	CString wstrName = L"";
+	m_ListBox.GetText(iIndex, wstrName);
+
+	auto iter = CEditMgr::Get_Instance()->Get_Map().find(wstrName.GetString()); // 삭제할 키 값 찾기
+
+	if (iter == CEditMgr::Get_Instance()->Get_Map().end())
+		return;
+
+	CEditMgr::Get_Instance()->Set_BUC(iter->second);
+
 
 	for (auto& iter : m_pOwner->m_TypeBut)
 	{
@@ -408,7 +370,7 @@ void CUnitTool::OnImgSelectClicked()
 	CFileDialog	Dlg(FALSE,
 		L"png",
 		L"*png",
-		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		OFN_HIDEREADONLY,
 		L"Data Files(*.png) | *.png||",
 		this);
 
@@ -426,26 +388,33 @@ void CUnitTool::OnImgSelectClicked()
 		CString		strTemp = Dlg.GetPathName().GetString();
 		TCHAR	pGetPath[MAX_PATH];
 
-		BattleUnitCreator&		tSrc = CEditMgr::Get_Instance()->Get_BUC();
+		BattleUnitCreator&		tSrc = m_BC;
 
 
 		lstrcpy(pGetPath, strTemp.GetString());
 
+		PathRemoveFileSpec(pGetPath);
+
 		CString strIndex = PathFindFileName(pGetPath);
+		CString	strPathPlus = PathFindFileName(pGetPath);
 
 		int i = 0;
+
+		wchar_t	src = strIndex[0];
 
 		for (; i < strIndex.GetLength(); ++i)
 		{
 			// isdigit : 매개 변수로 전달받은 문자가 숫자형태의 글자인지 아니면 글자형태의 글자인지 판별하는 함수
 			// 숫자형태의 글자로 판별하면 0이 아닌 값을 반환
 
-			if (0 != isdigit(strIndex[i]))
+			if (0 != iswdigit(strIndex[i]))
 				break;
 		}
 
 		// Delete(index, count) : 인덱스 위치로부터 카운트만큼 문자를 삭제하는 함수
 		strIndex.Delete(0, i);
+		strPathPlus.Delete(i, strPathPlus.GetLength());
+		strPathPlus += L"%d";
 
 		//_tstoi : 문자를 정수형으로 변환하는 함수
 		tSrc.m_tPath.iCount = _tstoi(strIndex);
@@ -482,6 +451,8 @@ void CUnitTool::OnImgSelectClicked()
 
 		tSrc.m_strName = PathFindFileName(tSrc.m_tPath.wstrObjKey.c_str());
 
+		tSrc.m_tData.strName = tSrc.m_strName.c_str();
+
 
 		CTextureMgr::Get_Instance()->Insert_Texture(tSrc.m_tPath.GetPath().c_str(), TEX_SINGLE, tSrc.m_strName.c_str());
 
@@ -498,6 +469,8 @@ void CUnitTool::OnImgSelectClicked()
 		m_pImage->Load(tSrc.m_tPath.GetPath().c_str());
 
 		m_SpriteImg.SetBitmap(*m_pImage);
+
+		m_strName = tSrc.m_strName.c_str();
 
 		UpdateData(FALSE);
 		

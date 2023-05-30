@@ -41,7 +41,6 @@ public:
 	CButton m_Radio[3];
 
 public:
-	map<CString, UNITDATA*>		m_mapUnitData;
 	CMyForm*		m_pOwner;
 	CImage*			m_pImage;
 	virtual void OnOK();

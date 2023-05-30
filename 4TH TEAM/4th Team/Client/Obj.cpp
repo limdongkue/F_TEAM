@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Obj.h"
 #include "TimeMgr.h"
+#include	"TextureMgr.h"
 
 D3DXVECTOR3 CObj::m_vScroll{};
 
