@@ -15,6 +15,10 @@ public:
 public:
 
 	map<wstring, vector<TEXINFO*>>* Get_mapMultiTex() { return &m_mapMultiTex; }
+	int		Get_Size(const wstring& pKey)
+	{
+		return m_mapMultiTex[pKey].size();
+	}
 
 private:
 	map<wstring, vector<TEXINFO*>>		m_mapMultiTex;

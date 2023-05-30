@@ -35,13 +35,13 @@ void CObjMgr::Late_Update()
 
 }
 
-void CObjMgr::Render(HDC hDC)
+void CObjMgr::Render()
 {
 	for (auto& iterA : m_ObjList)
 	{
 		for (auto& iterB : iterA)
 		{
-			iterB->Render(hDC);
+			iterB->Render();
 		}
 	}
 }

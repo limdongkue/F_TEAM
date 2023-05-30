@@ -63,9 +63,31 @@ HRESULT CTextureMgr::Insert_Texture(const TCHAR * pFilePath, TEXTYPE eType, cons
 		m_mapTexture.insert({ pObjKey, pTexture });
 
 	}
+	else if (eType == TEX_MULTI)
+	{
+		iter->second->Insert_Texture(pFilePath, pStateKey, iCount);
+	}
 
 
 	return S_OK;
+}
+
+int CTextureMgr::Find_TextSize(const TCHAR * pObjKey, const TCHAR * pStateKey)
+{
+	auto	iter = find_if(m_mapTexture.begin(), m_mapTexture.end(), [&](pair<wstring,CTexture*> MyPair)->bool
+	{
+		if (MyPair.first == pObjKey)
+			return true;
+
+		return false;
+	});
+
+	if (iter == m_mapTexture.end() || !dynamic_cast<CMultiTexture*>(iter->second))
+		return -1;
+
+	return dynamic_cast<CMultiTexture*>(iter->second)->Get_Size(pStateKey);
+
+
 }
 
 void CTextureMgr::Release(void)
