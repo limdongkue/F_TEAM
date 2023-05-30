@@ -12,6 +12,11 @@ public:
 	virtual HRESULT Insert_Texture(const TCHAR * pFilePath, const TCHAR * pStateKey = L"", const int & iCount = 0) override;
 	virtual void Release(void) override;
 
+	int		Get_Size(const wstring& pKey)
+	{
+		return m_mapMultiTex[pKey].size();
+	}
+
 private:
 	map<wstring, vector<TEXINFO*>>		m_mapMultiTex;
 };

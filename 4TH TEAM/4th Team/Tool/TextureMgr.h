@@ -20,6 +20,9 @@ public:
 								const TCHAR* pStateKey = L"",
 								const int& iCount = 0);
 
+	int		Find_TextSize(const TCHAR* pObjKey,
+		const TCHAR* pStateKey);
+
 	 void		Release(void);
 
 private:

@@ -9,5 +9,7 @@ public:
 
 public:
 	static CString		ConvertRelativePath(CString strFullPath);
+
+	static int DirFileCnt(const wstring & wstrPath);
 };
 

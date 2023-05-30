@@ -1,6 +1,5 @@
 #pragma once
 
-#pragma once
 
 typedef struct tagInfo
 {
@@ -71,21 +70,14 @@ typedef struct tagTexturePath
 	wstring		wstrPath = L"";
 	int			iCount = 0;
 
-	wstring		GetPath()
-	{
-		wstring src = L"";
-
-		src = wstrPath + L"\\" + wstrObjKey + L"\\" + wstrStateKey + L"\\" + to_wstring(iCount) + L".png";
-		return src;
-	}
 
 }IMGPATH;
 
 
 struct BattleUnitCreator
 {
-	UNITDATA	m_tData;
-	IMGPATH		m_tPath;
-	wstring		m_strName = L"";
+	UNITDATA		m_tData;
+	list<IMGPATH>	m_tPath;
+	wstring			m_strName = L"";
 
 };

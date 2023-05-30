@@ -12,7 +12,7 @@ class CObjMgr
 public:
 	int		Update();
 	void	Late_Update();
-	void	Render(HDC hDC);
+	void	Render();
 	void	Release();
 
 public:

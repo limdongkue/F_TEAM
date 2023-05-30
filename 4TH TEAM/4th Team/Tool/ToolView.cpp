@@ -16,6 +16,10 @@
 #include "MainFrm.h"
 #include "MiniView.h"
 #include "EditMgr.h"
+#include	"AbstractFactory.h"
+#include	"ObjMgr.h"
+#include	"Player.h"
+#include	"Monster.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -117,6 +121,8 @@ void CToolView::OnInitialUpdate()
 	m_pTerrain->Set_MainView(this);
 	CEditMgr::Get_Instance()->Set_EType(EDIT_TILE);
 
+	fCurX = 0.f, fCurY = 0.f;
+
 }
 
 void CToolView::OnDraw(CDC* /*pDC*/)
@@ -129,6 +135,25 @@ void CToolView::OnDraw(CDC* /*pDC*/)
 	CDevice::Get_Instance()->Render_Begin();
 
 	m_pTerrain->Render();
+
+	RECT	rc{};
+
+	GetClientRect(&rc);
+
+	float fX = WINCX / float(rc.right - rc.left);
+	float fY = WINCY / float(rc.bottom - rc.top);
+
+	CEditMgr::Get_Instance()->Set_Ratio(fX, fY);
+
+
+	if (CEditMgr::Get_Instance()->Get_EType() == EDIT_OBJECT)
+	{
+		CEditMgr::Get_Instance()->Render(fX, fY);
+
+	}
+
+	CObjMgr::Get_Instance()->Render();
+
 
 
 	CDevice::Get_Instance()->Render_End();
@@ -201,40 +226,75 @@ CToolDoc* CToolView::GetDocument() const // 디버그되지 않은 버전은 인라인으로 지
 void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	CScrollView::OnLButtonDown(nFlags, point);
 
-	CMainFrame*		pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	
-	if (!pMainFrm)
-		return;
-
-	CMiniView*		pMiniView = dynamic_cast<CMiniView*>(pMainFrm->m_SecondSplitter.GetPane(0, 0));
-	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitter.GetPane(1, 0));
-
-	int iDrawID = CEditMgr::Get_Instance()->Get_TileNum();
-
-	// point : 마우스 좌표를 갖고 있음.
-
-	int iSrc = m_pTerrain->Get_TileIndex({ float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f });
-
-	if (CEditMgr::Get_Instance()->Get_EType() == EDIT_TILE)
+	if (CEditMgr::Get_Instance()->Get_EType() == EDIT_OBJECT)
 	{
-		if (iSrc != -1)
+		CObj* pSrc;
+
+		if (CEditMgr::Get_Instance()->Get_BUC().m_tData.byJobIndex == 0)
 		{
-			/*CEditMgr::Get_Instance()->Get_TileNum();*/
-			/*m_pTerrain->Set_Index(iSrc);*/
-			CEditMgr::Get_Instance()->Set_TileNum(iDrawID);
+			pSrc = CAbstractFactory<CPlayer>::Create();
+			pSrc->Set_ID(OBJ_PLAYER);
+			CObjMgr::Get_Instance()->Add_Object(OBJ_PLAYER, pSrc);
+
 		}
+		else if (CEditMgr::Get_Instance()->Get_BUC().m_tData.byJobIndex == 1)
+		{
+			pSrc = CAbstractFactory<CMonster>::Create();
+			pSrc->Set_ID(OBJ_MONSTER);
+			CObjMgr::Get_Instance()->Add_Object(OBJ_MONSTER, pSrc);
+
+		}
+		else
+		{
+			return;
+		}
+
+		pSrc->Set_Pos(CEditMgr::Get_Instance()->Get_Pos());
+
+		pSrc->Set_ImgPath(CEditMgr::Get_Instance()->Get_BUC().m_tPath);
+
+		dynamic_cast<CBattleUnit*>(pSrc)->Set_UData(CEditMgr::Get_Instance()->Get_BUC().m_tData);
+
+	}
+	else
+	{
+		CMainFrame*		pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+
+		if (!pMainFrm)
+			return;
+
+		CMiniView*		pMiniView = dynamic_cast<CMiniView*>(pMainFrm->m_SecondSplitter.GetPane(0, 0));
+		CMyForm* pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitter.GetPane(1, 0));
+
+		int iDrawID = CEditMgr::Get_Instance()->Get_TileNum();
+
+		// point : 마우스 좌표를 갖고 있음.
+
+		int iSrc = m_pTerrain->Get_TileIndex({ float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f });
+
+		if (CEditMgr::Get_Instance()->Get_EType() == EDIT_TILE)
+		{
+			if (iSrc != -1)
+			{
+				/*CEditMgr::Get_Instance()->Get_TileNum();*/
+				/*m_pTerrain->Set_Index(iSrc);*/
+				CEditMgr::Get_Instance()->Set_TileNum(iDrawID);
+			}
+		}
+
+
+
+		// Invalidate : 호출 시 윈도우에 WM_PAINT와 WM_ERASEBKGND 메세지를 발생 시킴, 이때 OnDraw함수를 다시 한번 호출
+		// 인자가 FALSE : WM_PAINT만 발생
+		// 인자가 TRUE : WM_PAINT와 WM_ERASEBKGND 메세지를 발생
+
+		Invalidate(FALSE);
+		pMiniView->Invalidate(FALSE);
+
 	}
 
-
-
-	// Invalidate : 호출 시 윈도우에 WM_PAINT와 WM_ERASEBKGND 메세지를 발생 시킴, 이때 OnDraw함수를 다시 한번 호출
-	// 인자가 FALSE : WM_PAINT만 발생
-	// 인자가 TRUE : WM_PAINT와 WM_ERASEBKGND 메세지를 발생
-	
-	Invalidate(FALSE);
-	pMiniView->Invalidate(FALSE);
-	CScrollView::OnLButtonDown(nFlags, point);
 
 }
 
@@ -244,8 +304,26 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
 	CScrollView::OnMouseMove(nFlags, point);
-	
-	if (GetAsyncKeyState(VK_LBUTTON))
+
+	if (CEditMgr::Get_Instance()->Get_EType() == EDIT_OBJECT)
+	{
+		int iSrc = m_pTerrain->Get_TileIndex({ float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f });
+		if (iSrc != -1)
+		{
+
+			m_pTerrain->Set_Index(iSrc);
+
+
+			CEditMgr::Get_Instance()->Set_CurPos(m_pTerrain->Get_Tile(iSrc).vPos);
+
+
+			Invalidate(FALSE);
+		}
+
+
+
+	}
+	else if (GetAsyncKeyState(VK_LBUTTON))
 	{
 		int iSrc = m_pTerrain->Get_TileIndex({ float(point.x + GetScrollPos(0)), float(point.y + GetScrollPos(1)), 0.f });
 
@@ -266,6 +344,7 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 	
 	}
 
+	CEditMgr::Get_Instance()->Set_ScrollPos({ (float)GetScrollPos(0), (float)GetScrollPos(1), 0 });
 
 
 }

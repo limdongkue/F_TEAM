@@ -17,7 +17,7 @@ const TEXINFO * CMultiTexture::Get_Texture(const TCHAR * pStateKey, const int & 
 {
 	auto	iter = find_if(m_mapMultiTex.begin(), m_mapMultiTex.end(), [&](auto& MyPair)->bool
 	{
-		if (pStateKey == MyPair.first)
+		if (MyPair.first == pStateKey)
 			return true;
 
 		return false;
@@ -31,6 +31,14 @@ const TEXINFO * CMultiTexture::Get_Texture(const TCHAR * pStateKey, const int & 
 
 HRESULT CMultiTexture::Insert_Texture(const TCHAR * pFilePath, const TCHAR * pStateKey , const int & iCount)
 {
+
+	if (m_mapMultiTex.find(pStateKey) != m_mapMultiTex.end())
+	{
+
+		AfxMessageBox(L"이미 있는 텍스쳐를 추가했습니다");
+		return S_OK;
+
+	}
 
 	TCHAR		szFullPath[MAX_PATH] = L"";
 

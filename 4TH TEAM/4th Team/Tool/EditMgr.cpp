@@ -1,10 +1,13 @@
 #include "stdafx.h"
 #include "EditMgr.h"
 #include	"TextureMgr.h"
+#include	"Device.h"
+#include	"Terrain.h"
 
 
-CEditMgr::CEditMgr() : m_eType(EDIT_END)
+CEditMgr::CEditMgr() : m_eType(EDIT_END), m_vScrollPos({0,0,0})
 {
+	m_vCurPos = { 0, 0, 0 };
 }
 
 
@@ -36,6 +39,7 @@ void CEditMgr::Save(CString p_string)
 
 		DWORD dwByte = 0;
 		DWORD dwStringSize = 0;
+		DWORD dwSpriteLength = 0;
 
 		for (auto& Pair : m_mapBattle)
 		{
@@ -48,21 +52,30 @@ void CEditMgr::Save(CString p_string)
 			WriteFile(hFile, &Pair.second.m_tData.iAttack, sizeof(int), &dwByte, nullptr);
 			WriteFile(hFile, &Pair.second.m_tData.iHp, sizeof(int), &dwByte, nullptr);
 			WriteFile(hFile, &Pair.second.m_tData.byJobIndex, sizeof(BYTE), &dwByte, nullptr);
-			/*WriteFile(hFile, &Pair.second->byItem, sizeof(BYTE), &dwByte, nullptr);*/
+			WriteFile(hFile, &Pair.second.m_tData.byItem, sizeof(BYTE), &dwByte, nullptr);
 
-			dwStringSize = sizeof(wchar_t) * (Pair.second.m_tPath.wstrPath.length() + 1);
-			WriteFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
-			WriteFile(hFile, Pair.second.m_tPath.wstrPath.c_str(), dwStringSize, &dwByte, nullptr);
+			dwSpriteLength = Pair.second.m_tPath.size();
 
-			dwStringSize = sizeof(wchar_t) * (Pair.second.m_tPath.wstrObjKey.length() + 1);
-			WriteFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
-			WriteFile(hFile, Pair.second.m_tPath.wstrObjKey.c_str(), dwStringSize, &dwByte, nullptr);
+			WriteFile(hFile, &dwSpriteLength, sizeof(DWORD), &dwByte, nullptr);
 
-			dwStringSize = sizeof(wchar_t) * (Pair.second.m_tPath.wstrStateKey.length() + 1);
-			WriteFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
-			WriteFile(hFile, Pair.second.m_tPath.wstrStateKey.c_str(), dwStringSize, &dwByte, nullptr);
+			for (auto& iter : Pair.second.m_tPath)
+			{
+				dwStringSize = sizeof(wchar_t) * (iter.wstrPath.length() + 1);
+				WriteFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
+				WriteFile(hFile, iter.wstrPath.c_str(), dwStringSize, &dwByte, nullptr);
 
-			WriteFile(hFile, &Pair.second.m_tPath.iCount, sizeof(int), &dwByte, nullptr);
+				dwStringSize = sizeof(wchar_t) * (iter.wstrObjKey.length() + 1);
+				WriteFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
+				WriteFile(hFile, iter.wstrObjKey.c_str(), dwStringSize, &dwByte, nullptr);
+
+				dwStringSize = sizeof(wchar_t) * (iter.wstrStateKey.length() + 1);
+				WriteFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
+				WriteFile(hFile, iter.wstrStateKey.c_str(), dwStringSize, &dwByte, nullptr);
+
+				WriteFile(hFile, &iter.iCount, sizeof(int), &dwByte, nullptr);
+
+			}
+
 
 
 		}
@@ -101,6 +114,7 @@ void CEditMgr::Load(CString p_string)
 
 	DWORD dwByte = 0;
 	DWORD dwStringSize = 0;
+	DWORD	dwSpriteLength = 0;
 	BattleUnitCreator	pUnit = BattleUnitCreator();
 
 	while (true)
@@ -127,7 +141,7 @@ void CEditMgr::Load(CString p_string)
 		ReadFile(hFile, &pUnit.m_tData.iAttack, sizeof(int), &dwByte, nullptr);
 		ReadFile(hFile, &pUnit.m_tData.iHp, sizeof(int), &dwByte, nullptr);
 		ReadFile(hFile, &pUnit.m_tData.byJobIndex, sizeof(BYTE), &dwByte, nullptr);
-		//ReadFile(hFile, &pUnit->byItem, sizeof(BYTE), &dwByte, nullptr);
+		ReadFile(hFile, &pUnit.m_tData.byItem, sizeof(BYTE), &dwByte, nullptr);
 
 		pUnit.m_strName = pName;
 		pUnit.m_tData.strName = pName;
@@ -135,48 +149,92 @@ void CEditMgr::Load(CString p_string)
 		delete[]pName;
 		pName = nullptr;
 
-		ReadFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
+		ReadFile(hFile, &dwSpriteLength, sizeof(DWORD), &dwByte, nullptr);
 
-		pName = new TCHAR[dwStringSize];
-		ReadFile(hFile, pName, dwStringSize, &dwByte, nullptr);
+		pUnit.m_tPath.clear();
 
-		pUnit.m_tPath.wstrPath = pName;
+		for (size_t i = 0; i < dwSpriteLength; i++)
+		{
+			IMGPATH		pPath = IMGPATH();
 
-		delete[]pName;
-		pName = nullptr;
+			ReadFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
 
-		ReadFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
+			pName = new TCHAR[dwStringSize];
+			ReadFile(hFile, pName, dwStringSize, &dwByte, nullptr);
+			pPath.wstrPath = pName;
 
-		pName = new TCHAR[dwStringSize];
-		ReadFile(hFile, pName, dwStringSize, &dwByte, nullptr);
+			delete[]pName;
+			pName = nullptr;
 
-		pUnit.m_tPath.wstrObjKey = pName;
+			ReadFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
 
-		delete[]pName;
-		pName = nullptr;
+			pName = new TCHAR[dwStringSize];
+			ReadFile(hFile, pName, dwStringSize, &dwByte, nullptr);
+			pPath.wstrObjKey = pName;
 
-		ReadFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
+			delete[]pName;
+			pName = nullptr;
 
-		pName = new TCHAR[dwStringSize];
-		ReadFile(hFile, pName, dwStringSize, &dwByte, nullptr);
+			ReadFile(hFile, &dwStringSize, sizeof(DWORD), &dwByte, nullptr);
 
-		pUnit.m_tPath.wstrStateKey = pName;
+			pName = new TCHAR[dwStringSize];
+			ReadFile(hFile, pName, dwStringSize, &dwByte, nullptr);
+			pPath.wstrStateKey = pName;
 
-		delete[]pName;
-		pName = nullptr;
+			delete[]pName;
+			pName = nullptr;
 
-		ReadFile(hFile, &pUnit.m_tPath.iCount, sizeof(int), &dwByte, nullptr);
+			ReadFile(hFile, &pPath.iCount, sizeof(int), &dwByte, nullptr);
 
-
+			pUnit.m_tPath.push_back(pPath);
+			CTextureMgr::Get_Instance()->Insert_Texture(pPath.wstrPath.c_str(), TEX_MULTI, pPath.wstrObjKey.c_str(), pPath.wstrStateKey.c_str(), pPath.iCount);
+		}
 
 		m_mapBattle.insert({ pUnit.m_strName, pUnit });
-
-		CTextureMgr::Get_Instance()->Insert_Texture(pUnit.m_tPath.GetPath().c_str(), TEX_SINGLE, pUnit.m_strName.c_str());
 
 	}
 
 	CloseHandle(hFile);
 	AfxMessageBox(L"Load Successful");
+
+
+}
+
+void CEditMgr::Render(float posX, float posY)
+{
+	if (m_tCreator.m_strName == L"")
+		return;
+
+	auto iter = find_if(m_tCreator.m_tPath.begin(), m_tCreator.m_tPath.end(), [&](auto& Src)->bool
+	{
+		if (Src.wstrStateKey == L"대기_1")
+			return true;
+		else
+			return false;
+	});
+
+	if (iter == m_tCreator.m_tPath.end())
+		return;
+
+	const TEXINFO*	pTexInfo = CTextureMgr::Get_Instance()->Get_Texture(iter->wstrObjKey.c_str(), iter->wstrStateKey.c_str(), 0);
+
+	float	fX = pTexInfo->tImgInfo.Width / 2.f;
+	float	fY = pTexInfo->tImgInfo.Height / 2.f;
+
+	D3DXMATRIX matWorld;
+
+	D3DXMatrixTranslation(&matWorld, m_vCurPos.x, m_vCurPos.y, 0);
+
+	CTerrain::Set_Ratio(&matWorld, posX, posY);
+
+	// 이미지에 행렬을 반영
+	CDevice::Get_Instance()->Get_Sprite()->SetTransform(&matWorld);
+
+	CDevice::Get_Instance()->Get_Sprite()->Draw(pTexInfo->pTexture,
+		nullptr,							// 출력할 이미지 영역에 대한 Rect 주소, null인 경우 이미지의 0, 0 기준으로 출력
+		&D3DXVECTOR3(fX, fY, 0.f),			// 출력할 이미지의 중심축에 대한 vector3 주소, null인 경우 이미지의 0, 0이 중심 좌표
+		nullptr,							// 위치 좌표에 대한 vector3 주소, null인 경우 스크린 상의 0, 0좌표 출력
+		D3DCOLOR_ARGB(255, 255, 255, 255)); // 출력할 이미지와 섞을 색상 값, 0xffffffff를 넘겨주면 원본 색상 유지
 
 
 }

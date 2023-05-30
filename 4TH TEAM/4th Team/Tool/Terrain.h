@@ -19,7 +19,7 @@ public:
 
 public:
 	void		Set_MainView(CToolView* pMainView) { m_pMainView = pMainView; }
-	void		Set_Ratio(D3DXMATRIX* pOut, float fRatioX, float fRatioY);
+	static void		Set_Ratio(D3DXMATRIX* pOut, float fRatioX, float fRatioY);
 	void		Set_Index(const int& p_Int) 
 	{ 
 		m_iSelectedList.clear();
@@ -34,12 +34,21 @@ public:
 
 	vector<TILE*>&		Get_VecTile(void) { return m_vecTile; }
 
+	const	TILE&		Get_Tile(int p_Index)
+	{
+		return *m_vecTile[p_Index];
+	}
+
+	D3DXVECTOR3		Get_TilePos(int p_Index);
+
+
 
 public:
 	int		Get_TileIndex(const D3DXVECTOR3& vPos);
 	void	Tile_Change();
 	bool	Picking(const D3DXVECTOR3& vPos, const int& iIndex);
 	bool	Picking_Dot(const D3DXVECTOR3& vPos, const int& iIndex);
+
 
 private:
 	vector<TILE*>		m_vecTile;

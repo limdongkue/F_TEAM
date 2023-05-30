@@ -242,6 +242,29 @@ void CTerrain::Set_Ratio(D3DXMATRIX * pOut, float fRatioX, float fRatioY)
 }
 
 
+D3DXVECTOR3 CTerrain::Get_TilePos(int p_Index)
+{
+	D3DXVECTOR3 rV = m_vecTile[p_Index]->vPos;
+
+	D3DXMATRIX matWorld;
+	D3DXMatrixIdentity(&matWorld);
+
+	RECT	rc{};
+
+	GetClientRect(m_pMainView->m_hWnd, &rc);
+
+
+	float fX = WINCX / float(rc.right - rc.left);
+	float fY = WINCY / float(rc.bottom - rc.top);
+
+	Set_Ratio(&matWorld, fX, fY);
+
+	D3DXVec3TransformCoord(&rV, &rV, &matWorld);
+
+	return rV;
+
+}
+
 int CTerrain::Get_TileIndex(const D3DXVECTOR3 & vPos)
 {
 	for (size_t index = 0; index < m_vecTile.size(); ++index)
