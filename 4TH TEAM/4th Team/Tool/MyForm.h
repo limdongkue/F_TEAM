@@ -1,6 +1,7 @@
 #pragma once
 #include "UnitTool.h"
 #include "MapTool.h"
+#include "AnimTool.h"
 #include "afxwin.h"
 
 
@@ -33,14 +34,14 @@ protected:
 public:
 	afx_msg void OnUnitTool();
 	afx_msg void OnMapTool();
-	afx_msg void OnAnimationTool();
+
 
 
 private:
 	CFont	m_Font;
 	CUnitTool	m_UnitTool;
 	CMapTool	m_MapTool;
-
+	CAnimTool	m_AnimTool;
 
 public:
 	virtual void OnInitialUpdate();
@@ -49,6 +50,7 @@ public:
 	afx_msg void OnTileEdit();
 	afx_msg void OnObjectEdit();
 	CButton m_TypeBut[2];
+	afx_msg void OnAnimationTool();
 };
 
 

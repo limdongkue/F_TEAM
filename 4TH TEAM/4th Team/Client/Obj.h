@@ -39,5 +39,8 @@ protected:
 	wstring					m_wstrObjKey = L"";
 	wstring					m_wstrStateKey = L"";
 
+	int		m_iState = 0;
+	float	m_fSpeed = 0.f;
+
 };
 

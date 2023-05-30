@@ -1084,7 +1084,7 @@
 #define IDD_MAPTOOL                     314
 #define IDD_DIALOG1                     315
 #define IDD_DIALOG2                     316
-#define IDD_ANIMATIONTOOL               317
+#define IDD_ANIMTOOL                    318
 #define MN_GETHMENU                     0x01E1
 #define _WIN32_IE_IE20                  0x0200
 #define WM_MOUSEFIRST                   0x0200
@@ -1224,11 +1224,8 @@
 #define IDC_EDIT3                       1008
 #define IDC_LIST1                       1009
 #define IDC_RADIO1                      1010
-#define IDC_LIST2                       1010
 #define IDC_RADIO2                      1011
-#define IDC_LIST3                       1011
 #define IDC_RADIO3                      1012
-#define IDC_LIST4                       1012
 #define IDC_BUTTON2                     1013
 #define IDC_BUTTON3                     1014
 #define IDC_EDIT4                       1015
@@ -1236,6 +1233,7 @@
 #define IDC_BUTTON4                     1016
 #define IDC_TAB1                        1017
 #define IDC_PICTURE                     1018
+#define IDC_PICURE_ANIM                 1022
 #define CF_GDIOBJLAST                   0x03FF
 #define _WIN32_WINNT_NT4                0x0400
 #define _WIN32_IE_IE40                  0x0400
@@ -1591,9 +1589,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        320
+#define _APS_NEXT_RESOURCE_VALUE        321
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1022
-#define _APS_NEXT_SYMED_VALUE           318
+#define _APS_NEXT_CONTROL_VALUE         1023
+#define _APS_NEXT_SYMED_VALUE           319
 #endif
 #endif

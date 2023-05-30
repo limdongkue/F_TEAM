@@ -26,10 +26,18 @@ public:
 		return m_tCreator;
 	}
 
+public: // Anim
+	void	Set_AnimNum(int _Anim) { m_iAnimNum = _Anim; }
+	
+
+	int		Get_AnimNum()		   { return m_iAnimNum; }
+
 private:
 	EDIT_TYPE	m_eType;
 
 	int			m_iTileNum;
+	int			m_iAnimNum;
+
 
 	BattleUnitCreator	m_tCreator;
 

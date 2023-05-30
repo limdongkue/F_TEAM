@@ -151,9 +151,9 @@ void CUnitTool::OnDestroy()
 	m_mapUnitData.clear();
 
 	m_ListBox.ResetContent();
-
+	
 	m_pImage->Destroy();
-	Safe_Delete(m_pImage);
+	/*Safe_Delete(m_pImage);*/
 }
 
 

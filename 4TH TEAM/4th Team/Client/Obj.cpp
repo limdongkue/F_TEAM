@@ -25,4 +25,6 @@ void CObj::Move_Frame(void)
 
 	if (m_tFrame.fFrame > m_tFrame.fMax)
 		m_tFrame.fFrame = 0.f;
+
+
 }

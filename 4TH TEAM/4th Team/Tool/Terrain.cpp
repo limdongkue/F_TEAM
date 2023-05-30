@@ -24,7 +24,7 @@ HRESULT CTerrain::Initialize(void)
 		return E_FAIL;
 	}
 
-	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"..//Image/Texture/Back/TileOption/3.png", TEX_SINGLE, L"Terrain_Select")))
+	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"../Image/Texture/Back/TileOption/3.png", TEX_SINGLE, L"Terrain_Select")))
 	{
 		AfxMessageBox(L"TileTexture Create Failed");
 		return E_FAIL;

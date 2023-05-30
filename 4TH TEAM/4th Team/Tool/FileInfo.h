@@ -9,5 +9,8 @@ public:
 
 public:
 	static CString		ConvertRelativePath(CString strFullPath);
+
+	static int DirFileCnt(const wstring& wstrPath);
+	static void DirInfoExtraction(const wstring& wstrPath, list<IMGPATH*>& rPathList);
 };
 

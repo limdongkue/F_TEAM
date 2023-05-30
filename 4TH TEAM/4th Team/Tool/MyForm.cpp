@@ -33,6 +33,7 @@ BEGIN_MESSAGE_MAP(CMyForm, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON5, &CMyForm::OnMapTool)
 	ON_BN_CLICKED(IDC_RADIO2, &CMyForm::OnTileEdit)
 	ON_BN_CLICKED(IDC_RADIO1, &CMyForm::OnObjectEdit)
+	ON_BN_CLICKED(IDC_BUTTON6, &CMyForm::OnAnimationTool)
 END_MESSAGE_MAP()
 
 
@@ -60,6 +61,16 @@ void CMyForm::OnMapTool()
 
 	m_MapTool.ShowWindow(SW_SHOW);
 }
+
+void CMyForm::OnAnimationTool()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (nullptr == m_AnimTool.GetSafeHwnd())
+		m_AnimTool.Create(IDD_ANIMTOOL);
+
+	m_AnimTool.ShowWindow(SW_SHOW);
+}
+
 
 
 void CMyForm::OnInitialUpdate()
