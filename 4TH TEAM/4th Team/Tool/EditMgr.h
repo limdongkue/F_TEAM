@@ -81,8 +81,6 @@ private:
 
 	D3DXVECTOR3		m_vCurPos;
 
-	int		m_iTileNum;
-
 	BattleUnitCreator	m_tCreator;
 
 	map<wstring, BattleUnitCreator>	m_mapBattle;
