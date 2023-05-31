@@ -19,11 +19,12 @@ CPlayer_Client::~CPlayer_Client()
 HRESULT CPlayer_Client::Initialize(void)
 {
 	m_tInfo.vPos = { 400.f, 300.f, 0.f };
+	m_tInfo.vDir = { 1.f, 0.f, 0.f };
 
 	TCHAR	szPath[MAX_STR] = L"";
 
 	m_wstrObjKey = L"김시민";
-	m_wstrStateKey = L"이동_1";
+	m_wstrStateKey = L"대기_1";
 
 	m_tFrame = { 0.f, 8.f };
 	m_fSpeed = 3.f;
@@ -66,7 +67,7 @@ void CPlayer_Client::Late_Update(void)
 		else
 		{
 			RMouseClick = false;
-			m_eUnitState = STATE_IDLE;
+			Set_Motion(UNIT_STATETYPE::STATE_IDLE);
 		/*	m_wstrStateKey = L"대기_1";*/
 		}
 	}
@@ -157,23 +158,76 @@ void CPlayer_Client::Key_Input()
 		MousePos = ::Get_Mouse();
 		RMouseClick = true;
 
-		float fAngle = acosf(m_tInfo.vDir.x);
+		D3DXVECTOR3 Dir = MousePos - m_tInfo.vPos;
+		
+
+		if (Dir.x < 0 && Dir.y < 0)
+		{
+			m_eUnitDir = DIR_LU;
+
+			iReverse = 1.f;
+
+			if (Dir.x < 30.f && Dir.x > -30.f)
+			{
+				m_eUnitDir = DIR_TOP;
+			}
+
+		}
+		else if (Dir.x < 0 && Dir.y > 0)
+		{
+			m_eUnitDir = DIR_LD;
+
+			iReverse = 1.f;
+
+			if (Dir.x < 30.f && Dir.x > -30.f)
+				m_eUnitDir = DIR_BOTTOM;
+		}
+		else if (Dir.x > 0 && Dir.y > 0)
+		{
+			m_eUnitDir = DIR_RD;
+
+			iReverse = -1.f;
+
+			if (Dir.x < 30.f && Dir.x > -30.f)
+				m_eUnitDir = DIR_BOTTOM;
+		}
+		else if (Dir.x > 0 && Dir.y < 0)
+		{
+			m_eUnitDir = DIR_RU;
+			
+			iReverse = -1.f;
+
+			if (Dir.x < 30.f && Dir.x > -30.f)
+			{
+				m_eUnitDir = DIR_TOP;
+			}
+		}
+
+
+		if ((Dir.y > -30.f && Dir.y < 30.f) && Dir.x > 0)
+		{
+			m_eUnitDir = DIR_RIGHT;
+			iReverse = -1.f;
+		}
+		else if ((Dir.y > -30.f && Dir.y < 30.f) && Dir.x < 0)
+		{
+			m_eUnitDir = DIR_LEFT;
+			iReverse = 1.f;
+		}
+
+		D3DXVec3Normalize(&Dir, &Dir);
+
+
+		float fAngle = acosf(Dir.x);
 		if (m_tInfo.vDir.y < 0)
 			fAngle = 2 * D3DX_PI - fAngle;
 
 		fAngle = D3DXToDegree(fAngle);
 
-		int iDirection = static_cast<int>(fAngle + 22.5f) / 45;
-
-		if (iDirection == 0 || iDirection == 1 || iDirection == 7)
-			iReverse *= -1.f;
-		else
-			iReverse = 1.f;
 
 		Set_Motion(UNIT_STATETYPE::STATE_MOVE);
 	}
 
-	// 마우스 오른쪽 버튼을 눌렀을 때, 플레이어의 위치랑 마우스 위치의 각도를 계산해서? m_eUnitDir을 바꾸고, Dir
 }
 
 void CPlayer_Client::Set_Motion(UNIT_STATETYPE _eState)
@@ -185,48 +239,38 @@ void CPlayer_Client::Set_Motion(UNIT_STATETYPE _eState)
 	switch (_eState)
 	{
 	case UNIT_STATETYPE::STATE_IDLE:
+		if (m_eUnitDir == DIR_LU)
+			m_wstrStateKey = L"대기_3";
+		if (m_eUnitDir == DIR_LD)
+			m_wstrStateKey = L"대기_1";
+		if (m_eUnitDir == DIR_RU)
+			m_wstrStateKey = L"대기_3";
+		if (m_eUnitDir == DIR_RD)
+			m_wstrStateKey = L"대기_1";
+		if (m_eUnitDir == DIR_RIGHT)
+			m_wstrStateKey = L"대기_2";
+		if (m_eUnitDir == DIR_LEFT)
+			m_wstrStateKey = L"대기_2";
 		break;
 	case UNIT_STATETYPE::STATE_ATTAK:
 		break;
 	case UNIT_STATETYPE::STATE_HITED:
 		break;
 	case UNIT_STATETYPE::STATE_MOVE:
+		if(m_eUnitDir == DIR_LU)
+			m_wstrStateKey = L"이동_3";
+		if (m_eUnitDir == DIR_LD)
+			m_wstrStateKey = L"이동_1";
+		if (m_eUnitDir == DIR_RU)
+			m_wstrStateKey = L"이동_3";
+		if (m_eUnitDir == DIR_RD)
+			m_wstrStateKey = L"이동_1";
+		if (m_eUnitDir == DIR_RIGHT)
+			m_wstrStateKey = L"이동_2";
+		if (m_eUnitDir == DIR_LEFT)
+			m_wstrStateKey = L"이동_2";
 		break;
 	case UNIT_STATETYPE::STATE_SKILL:
 		break;
 	}
-
-
-	//switch (_eDir)
-	//{
-	//case DIR_RIGHT:
-	//	m_wstrStateKey = L"이동_2";
-	//	break;
-	//case DIR_RD:
-	//	m_wstrStateKey = L"이동_1";
-	//	break;
-	//case DIR_BOTTOM:
-	//	m_wstrStateKey = L"이동_5";
-	//	break;
-	//case DIR_LD:
-	//	m_wstrStateKey = L"이동_1";
-	//	break;
-	//case DIR_LEFT:
-	//	m_wstrStateKey = L"이동_2";
-	//	break;
-	//case DIR_LU:
-	//	m_wstrStateKey = L"이동_3";
-	//	break;
-	//case DIR_TOP:
-	//	m_wstrStateKey = L"이동_4";
-	//	break;
-	//case DIR_RU:
-	//	m_wstrStateKey = L"이동_3";
-	//	break;
-	//case DIR_END:
-	//	break;
-	//default:
-	//	break;
-	//}
-	
 }

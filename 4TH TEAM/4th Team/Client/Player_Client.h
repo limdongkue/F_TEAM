@@ -28,5 +28,6 @@ private:
 	UNIT_STATETYPE m_eUnitState;
 
 	int iReverse = 1.f;
+	int	iDirection = 0;
 };
 
